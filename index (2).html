@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 시험 캘린더</title>
+<meta property="og:title" content="2026 시험 일정 📚">
+<meta property="og:description" content="April - June 2026 시험 캘린더">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maths: #7C6FF7;
+    --maths-bg: #F0EFFE;
+    --maths-text: #3D3899;
+    --science: #22C58B;
+    --science-bg: #E3F9F2;
+    --science-text: #0D6E51;
+    --english: #F5A623;
+    --english-bg: #FEF5E7;
+    --english-text: #7A5010;
+    --humanities: #F07050;
+    --humanities-bg: #FDF0EC;
+    --humanities-text: #8B3520;
+    --psychology: #9B9B9B;
+    --psychology-bg: #F5F5F3;
+    --psychology-text: #4A4A48;
+    --pe: #7ABF3F;
+    --pe-bg: #EEF7E4;
+    --pe-text: #3A6A18;
+    --bg: #0D0D12;
+    --surface: #16161E;
+    --surface2: #1E1E28;
+    --border: rgba(255,255,255,0.07);
+    --text: #F0EFE8;
+    --text-muted: rgba(240,239,232,0.45);
+    --accent: #7C6FF7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  header { margin-bottom: 2.5rem; }
+
+  .header-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+
+  .brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .brand em { font-style: italic; color: var(--accent); }
+
+  .today-badge {
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-top: 6px;
+  }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+
+  .leg {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--text-muted);
+  }
+
+  .leg-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* Countdown */
+  .countdown {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .cd-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 4px; }
+  .cd-exam { font-size: 1.3rem; font-weight: 500; color: var(--text); line-height: 1.2; }
+  .cd-date { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  .cd-number {
+    text-align: right;
+  }
+
+  .cd-d {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .cd-unit { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .upcoming-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    grid-column: 1 / -1;
+    padding-top: 8px;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .chip {
+    font-size: 11px; padding: 3px 10px;
+    border-radius: 100px; font-weight: 500;
+  }
+
+  /* Calendar */
+  .month-block { margin-bottom: 2.5rem; }
+
+  .month-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .cal-day-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 8px 4px;
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .cal-cell {
+    border-right: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    padding: 6px 6px 8px;
+    min-height: 80px;
+    background: var(--surface);
+    transition: background 0.15s;
+  }
+
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-cell.empty { background: var(--bg); opacity: 0.5; }
+  .cal-cell.today-cell { background: rgba(124,111,247,0.08); }
+  .cal-cell.today-cell .cell-num { color: var(--accent); font-weight: 700; }
+
+  .cell-num {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .ev-pill {
+    display: block;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 600px) {
+    .cal-cell { min-height: 56px; padding: 4px; }
+    .ev-pill { font-size: 9px; padding: 1px 4px; }
+    .cell-num { font-size: 11px; }
+  }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  /* Animations */
+  .page { animation: fadeUp 0.5s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="page">
+
+  <header>
+    <div class="header-top">
+      <div class="brand">2026<br><em>시험 일정</em></div>
+      <div class="today-badge" id="today-badge">—</div>
+    </div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--maths)"></div>수학</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--science)"></div>과학</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--english)"></div>영어</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--humanities)"></div>인문</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--psychology)"></div>심리</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--pe)"></div>체육</div>
+    </div>
+  </header>
+
+  <div class="countdown" id="countdown"></div>
+
+  <div id="calendar-root"></div>
+
+  <footer>April – June 2026 &nbsp;·&nbsp; 총 <span id="total-exams">—</span>개 시험</footer>
+</div>
+
+<script>
+const EXAMS = [
+  {date:'2026-04-27',label:'Intl Maths P2',cat:'maths'},
+  {date:'2026-04-28',label:'Chemistry (42)',cat:'science'},
+  {date:'2026-04-29',label:'Maths Ext P4',cat:'maths'},
+  {date:'2026-04-30',label:'Biology (42)',cat:'science'},
+  {date:'2026-05-05',label:'Geography (013)',cat:'humanities'},
+  {date:'2026-05-06',label:'English P1',cat:'english'},
+  {date:'2026-05-07',label:'Chemistry (62)',cat:'science'},
+  {date:'2026-05-07',label:'Psychology 1',cat:'psychology'},
+  {date:'2026-05-08',label:'Physics (Ext)',cat:'science'},
+  {date:'2026-05-08',label:'World Lit P2',cat:'english'},
+  {date:'2026-05-12',label:'Biology (62)',cat:'science'},
+  {date:'2026-05-13',label:'Geography (023)',cat:'humanities'},
+  {date:'2026-05-13',label:'Maths Ext P6',cat:'maths'},
+  {date:'2026-05-14',label:'World Lit P3',cat:'english'},
+  {date:'2026-05-14',label:'Psychology 2',cat:'psychology'},
+  {date:'2026-05-15',label:'English P2',cat:'english'},
+  {date:'2026-05-18',label:'Add Maths 1',cat:'maths'},
+  {date:'2026-05-19',label:'Physics Alt P',cat:'science'},
+  {date:'2026-05-22',label:'Physical Ed',cat:'pe'},
+  {date:'2026-05-26',label:'Add Maths 2',cat:'maths'},
+  {date:'2026-06-03',label:'Physics MCQ',cat:'science'},
+  {date:'2026-06-08',label:'Biology (22)',cat:'science'},
+  {date:'2026-06-09',label:'Chemistry MCQ',cat:'science'},
+];
+
+const CAT_STYLE = {
+  maths:      {bg:'var(--maths-bg)',    color:'var(--maths-text)'},
+  science:    {bg:'var(--science-bg)',  color:'var(--science-text)'},
+  english:    {bg:'var(--english-bg)',  color:'var(--english-text)'},
+  humanities: {bg:'var(--humanities-bg)',color:'var(--humanities-text)'},
+  psychology: {bg:'var(--psychology-bg)',color:'var(--psychology-text)'},
+  pe:         {bg:'var(--pe-bg)',       color:'var(--pe-text)'},
+};
+
+const today = new Date(2026,2,26);
+const todayStr = '2026-03-26';
+
+// Today badge
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+document.getElementById('today-badge').textContent =
+  `오늘 · ${months[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
+
+document.getElementById('total-exams').textContent = EXAMS.length;
+
+// Countdown
+const upcoming = EXAMS.filter(e => e.date >= todayStr).sort((a,b) => a.date.localeCompare(b.date));
+const cdEl = document.getElementById('countdown');
+if(upcoming.length) {
+  const nxt = upcoming[0];
+  const diff = Math.round((new Date(nxt.date) - today) / 86400000);
+  const dLabel = diff === 0 ? 'TODAY' : diff === 1 ? '1' : String(diff);
+  const dUnit  = diff === 0 ? '' : 'days left';
+  const [y,m,d] = nxt.date.split('-');
+  const dateStr = `${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+
+  const chipsHTML = upcoming.slice(0,6).map(e => {
+    const s = CAT_STYLE[e.cat];
+    const dd = Math.round((new Date(e.date) - today) / 86400000);
+    const dl = dd===0?'오늘':dd===1?'내일':'D-'+dd;
+    return `<span class="chip" style="background:${s.bg};color:${s.color}">${dl} · ${e.label}</span>`;
+  }).join('');
+
+  cdEl.innerHTML = `
+    <div>
+      <div class="cd-label">다음 시험</div>
+      <div class="cd-exam">${nxt.label}</div>
+      <div class="cd-date">${dateStr}</div>
+    </div>
+    <div class="cd-number">
+      <div class="cd-d">${dLabel}</div>
+      <div class="cd-unit">${dUnit}</div>
+    </div>
+    <div class="upcoming-chips">${chipsHTML}</div>
+  `;
+}
+
+// Calendar
+const MONTH_DATA = [
+  {y:2026,m:3,name:'April 2026'},
+  {y:2026,m:4,name:'May 2026'},
+  {y:2026,m:5,name:'June 2026'},
+];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const root = document.getElementById('calendar-root');
+
+MONTH_DATA.forEach(({y,m,name}) => {
+  const block = document.createElement('div');
+  block.className = 'month-block';
+
+  const mTitle = document.createElement('div');
+  mTitle.className = 'month-name';
+  mTitle.textContent = name;
+  block.appendChild(mTitle);
+
+  const grid = document.createElement('div');
+  grid.className = 'cal-grid';
+
+  DAYS.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-day-header';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+
+  const firstDay = new Date(y,m,1).getDay();
+  const lastDate = new Date(y,m+1,0).getDate();
+
+  for(let i=0;i<firstDay;i++){
+    const e = document.createElement('div');
+    e.className='cal-cell empty';
+    grid.appendChild(e);
+  }
+
+  for(let d=1;d<=lastDate;d++){
+    const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (ds===todayStr?' today-cell':'');
+
+    const num = document.createElement('span');
+    num.className='cell-num';
+    num.textContent = d;
+    cell.appendChild(num);
+
+    EXAMS.filter(e=>e.date===ds).forEach(ev=>{
+      const s = CAT_STYLE[ev.cat];
+      const pill = document.createElement('span');
+      pill.className='ev-pill';
+      pill.style.background=s.bg;
+      pill.style.color=s.color;
+      pill.textContent=ev.label;
+      cell.appendChild(pill);
+    });
+
+    grid.appendChild(cell);
+  }
+
+  const total = firstDay + lastDate;
+  const rem = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for(let i=0;i<rem;i++){
+    const e = document.createElement('div');
+    e.className='cal-cell empty';
+    grid.appendChild(e);
+  }
+
+  block.appendChild(grid);
+  root.appendChild(block);
+});
+</script>
+</body>
+</html>
